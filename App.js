@@ -57,7 +57,7 @@ const Section = ({children, title}): Node => {
   );
 };
 
-
+var d_client;
 MQTT.createClient({
   uri: 'mqtt://74.208.35.55:1883',
   clientId: 'your_client_id'
@@ -79,14 +79,22 @@ MQTT.createClient({
       console.log('connected');
       // client.subscribe('ahsefati_1/#', 0);
       client.subscribe('brokers/#', 0);
+
+     
       // client.publish('/data', "test", 0, false);
     });
 
 
     client.connect();
+    d_client = client
   }).catch(function(err){
     console.log(err);
   });
+
+  const d_p = ()=> {
+    d_client.subscribe("ok",0)
+    Alert.alert("Success!")
+  }
 
 
 
@@ -121,7 +129,7 @@ const App: () => Node = () => {
             <SafeAreaView>
               <TextInput style={styles.idInput} numberOfLines={1} value={idofme} onChangeText={newValue => setidofme(newValue)}  placeholder="put your ID here, ex: ahsefati"/>
               <Text>DimQ will recognize you by: <Text style={styles.highlight}>{idofme}</Text></Text>
-              <Button title="Set my ID"></Button>
+              <Button onPress={d_p}  title="Set my ID"></Button>
             </SafeAreaView>
           </Section>
 
