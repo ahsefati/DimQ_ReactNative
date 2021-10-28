@@ -6,14 +6,17 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import type {Node} from 'react';
 import {
+  Alert,
+  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
   useColorScheme,
   View,
 } from 'react-native';
@@ -54,18 +57,12 @@ const Section = ({children, title}): Node => {
   );
 };
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  MQTT.createClient({
-    uri: 'mqtt://74.208.35.55:1883',
-    clientId: 'your_client_id'
-  }).then(function(client) {
-  
+MQTT.createClient({
+  uri: 'mqtt://74.208.35.55:1883',
+  clientId: 'your_client_id'
+}).then(function(client) {
+    
     client.on('closed', function() {
       console.log('mqtt.event.closed');
     });
@@ -80,14 +77,33 @@ const App: () => Node = () => {
   
     client.on('connect', function() {
       console.log('connected');
-      client.subscribe('/data', 0);
-      client.publish('/data', "test", 0, false);
+      // client.subscribe('ahsefati_1/#', 0);
+      client.subscribe('brokers/#', 0);
+      // client.publish('/data', "test", 0, false);
     });
-  
+
+
     client.connect();
   }).catch(function(err){
     console.log(err);
   });
+
+
+
+const App: () => Node = () => {
+  const isDarkMode = useColorScheme() === 'dark';
+
+  const backgroundStyle = {
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+  const [idofme , setidofme] = useState("DimQ")
+  const [mymessages , setmymessages] = useState("Your Messages will be here..")
+
+  
+  
+    
+
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -95,25 +111,32 @@ const App: () => Node = () => {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Header />
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
+          <Section title="DimQ Messenger" children="Distributed Intelligent Message Queue"/>
+
+          <Section title="Your ID">
+            <SafeAreaView>
+              <TextInput style={styles.idInput} numberOfLines={1} value={idofme} onChangeText={newValue => setidofme(newValue)}  placeholder="put your ID here, ex: ahsefati"/>
+              <Text>DimQ will recognize you by: <Text style={styles.highlight}>{idofme}</Text></Text>
+              <Button title="Set my ID"></Button>
+            </SafeAreaView>
           </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
+
+          <Section title="Messages">
+            <Text>{mymessages}</Text>
           </Section>
-          <Section title="Debug">
-            <DebugInstructions />
+
+          <Section title="Contacts">
+            <SafeAreaView>
+              <TextInput style={styles.idInput}  placeholder="put his/her ID here"/>
+              <TextInput multiline={true} numberOfLines={5} style={styles.msgInput}  placeholder="put your message here"/>
+              <Button  title="Send!"></Button>
+            </SafeAreaView>
           </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+          
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -137,6 +160,21 @@ const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
   },
+
+  idInput:{
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+
+  msgInput:{
+    height: 100,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  }
+
 });
 
 export default App;
