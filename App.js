@@ -57,7 +57,10 @@ const Section = ({children, title}): Node => {
   );
 };
 
+
+
 var d_client;
+var d_message;
 MQTT.createClient({
   uri: 'mqtt://74.208.35.55:1883',
   clientId: 'your_client_id'
@@ -72,7 +75,7 @@ MQTT.createClient({
     });
   
     client.on('message', function(msg) {
-      console.log('mqtt.event.message', msg);
+      d_message(msg)
     });
   
     client.on('connect', function() {
@@ -91,11 +94,10 @@ MQTT.createClient({
     console.log(err);
   });
 
-  const d_p = ()=> {
-    d_client.subscribe("ok",0)
-    Alert.alert("Success!")
+  const d_subscribe = (idofme) => {
+    d_client.subscribe(idofme + "/#",0)
+    Alert.alert("Success!" + idofme)
   }
-
 
 
 const App: () => Node = () => {
@@ -109,7 +111,10 @@ const App: () => Node = () => {
   const [mymessages , setmymessages] = useState("Your Messages will be here..")
 
   
-  
+  d_message = (msg) => {
+    setmymessages(msg.data)
+    console.log(msg)
+  }
     
 
 
@@ -129,7 +134,7 @@ const App: () => Node = () => {
             <SafeAreaView>
               <TextInput style={styles.idInput} numberOfLines={1} value={idofme} onChangeText={newValue => setidofme(newValue)}  placeholder="put your ID here, ex: ahsefati"/>
               <Text>DimQ will recognize you by: <Text style={styles.highlight}>{idofme}</Text></Text>
-              <Button onPress={d_p}  title="Set my ID"></Button>
+              <Button onPress={d_subscribe.bind(this,idofme)}  title="Set my ID"></Button>
             </SafeAreaView>
           </Section>
 
