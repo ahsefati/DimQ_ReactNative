@@ -60,7 +60,7 @@ const Section = ({children, title}): Node => {
 
 
 var d_client;
-var d_message;
+var d_on_message;
 MQTT.createClient({
   uri: 'mqtt://74.208.35.55:1883',
   clientId: 'your_client_id'
@@ -75,7 +75,7 @@ MQTT.createClient({
     });
   
     client.on('message', function(msg) {
-      d_message(msg)
+      d_on_message(msg)
     });
   
     client.on('connect', function() {
@@ -99,6 +99,11 @@ MQTT.createClient({
     Alert.alert("Success!" + idofme)
   }
 
+  const d_publish = (idofme, idtopublish, msgtopublish)=> {
+    d_client.publish(idtopublish+ "/" + idofme, msgtopublish, 0, false)
+    console.log("SENT!")
+  }
+
 
 const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -107,11 +112,13 @@ const App: () => Node = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  const [idofme , setidofme] = useState("DimQ")
+  const [idofme , setidofme] = useState("AmirhosseinSefati")
   const [mymessages , setmymessages] = useState("Your Messages will be here..")
-
+  const [idtopublish, setidtopublish] = useState("")
+  const [msgtopublish, setmsgtopublish] = useState("")
   
-  d_message = (msg) => {
+  
+  d_on_message = (msg) => {
     setmymessages(msg.data)
     console.log(msg)
   }
@@ -144,9 +151,9 @@ const App: () => Node = () => {
 
           <Section title="Contacts">
             <SafeAreaView>
-              <TextInput style={styles.idInput}  placeholder="put his/her ID here"/>
-              <TextInput multiline={true} numberOfLines={5} style={styles.msgInput}  placeholder="put your message here"/>
-              <Button  title="Send!"></Button>
+              <TextInput style={styles.idInput} onChangeText={newValue => setidtopublish(newValue)} value={idtopublish} placeholder="put his/her ID here"/>
+              <TextInput multiline={true} onChangeText={newValue => setmsgtopublish(newValue)} value={msgtopublish} numberOfLines={5} style={styles.msgInput}  placeholder="put your message here"/>
+              <Button onPress={d_publish.bind(this, idofme, idtopublish, msgtopublish)} title="Send!"></Button>
             </SafeAreaView>
           </Section>
           
