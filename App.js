@@ -62,7 +62,7 @@ const Section = ({children, title}): Node => {
 var d_client;
 var d_on_message;
 MQTT.createClient({
-  uri: 'mqtt://74.208.35.55:1883',
+  uri: 'mqtt://192.168.20.39:1884',
   clientId: 'your_client_id'
 }).then(function(client) {
     
